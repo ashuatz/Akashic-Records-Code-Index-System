@@ -1,0 +1,22 @@
+.git
+.gitignore
+.venv
+venv
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+*.log
+
+# Runtime/generated data should be mounted as volume
+data/*
+!data/.gitkeep
+
+# Docs and local tooling not required in runtime image
+Docs
+Doc
+benchmark
+scripts/indexing
+.claude
+.omc
+.vscode

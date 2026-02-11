@@ -1,0 +1,363 @@
+# Test Queries for Benchmark Evaluation
+# Each query should have expected results for validation
+#
+# Categories:
+# - function_search: Looking for specific functions/methods
+# - concept_search: Understanding how something works
+# - error_search: Finding error handling code
+# - pattern_search: Finding design patterns/structures
+# - api_search: Finding API usage examples
+
+queries:
+  # ========== Function Search ==========
+  - id: func_collision_detection
+    query: "collision detection function"
+    category: function_search
+    expected_files:
+      - "Source/Runtime/Engine/Private/Collision.cpp"
+      - "Source/Runtime/Physics/CollisionSystem.cpp"
+      - "Engine/Collision/CollisionDetector.cs"
+    expected_symbols:
+      - "DetectCollision"
+      - "CheckCollision"
+      - "TestCollision"
+
+  - id: func_render_mesh
+    query: "render mesh to screen"
+    category: function_search
+    expected_files:
+      - "Source/Runtime/Renderer/MeshRenderer.cpp"
+      - "Renderer/MeshDrawer.cs"
+      - "Graphics/Rendering/RenderMesh.cpp"
+    expected_symbols:
+      - "RenderMesh"
+      - "DrawMesh"
+
+  - id: func_load_texture
+    query: "load texture from file"
+    category: function_search
+    expected_files:
+      - "Source/Runtime/Graphics/TextureLoader.cpp"
+      - "Assets/TextureImporter.cs"
+      - "Graphics/Texture/TextureManager.cpp"
+    expected_symbols:
+      - "LoadTexture"
+      - "ImportTexture"
+      - "LoadTextureFromFile"
+
+  - id: func_update_animation
+    query: "update skeletal animation"
+    category: function_search
+    expected_files:
+      - "Source/Runtime/Animation/SkeletalMeshComponent.cpp"
+      - "Animation/SkeletonAnimator.cs"
+      - "Animation/AnimationSystem.cpp"
+    expected_symbols:
+      - "UpdateAnimation"
+      - "TickAnimation"
+      - "AnimateSkeleton"
+
+  - id: func_raytrace
+    query: "ray tracing intersection test"
+    category: function_search
+    expected_files:
+      - "Source/Runtime/Physics/RayTracer.cpp"
+      - "Physics/Raycasting.cs"
+      - "Math/Ray.cpp"
+    expected_symbols:
+      - "Raycast"
+      - "IntersectRay"
+      - "TraceRay"
+
+  # ========== Concept Search ==========
+  - id: concept_memory_allocation
+    query: "how does memory allocation work"
+    category: concept_search
+    expected_files:
+      - "Source/Runtime/Core/Memory/MemoryAllocator.cpp"
+      - "Core/Memory/Allocator.cs"
+      - "Memory/MemoryManager.cpp"
+    expected_symbols:
+      - "Allocate"
+      - "AllocateMemory"
+      - "Malloc"
+
+  - id: concept_entity_component
+    query: "entity component system architecture"
+    category: concept_search
+    expected_files:
+      - "Source/Runtime/Core/ECS/EntityManager.cpp"
+      - "ECS/Entity.cs"
+      - "Core/ComponentSystem.cpp"
+    expected_symbols:
+      - "AddComponent"
+      - "GetComponent"
+      - "CreateEntity"
+
+  - id: concept_shader_pipeline
+    query: "graphics shader pipeline"
+    category: concept_search
+    expected_files:
+      - "Source/Runtime/Renderer/ShaderPipeline.cpp"
+      - "Graphics/Shader/ShaderManager.cs"
+      - "Renderer/PipelineState.cpp"
+    expected_symbols:
+      - "BindShader"
+      - "SetupPipeline"
+      - "CompileShader"
+
+  - id: concept_network_sync
+    query: "network synchronization and replication"
+    category: concept_search
+    expected_files:
+      - "Source/Runtime/Network/NetworkManager.cpp"
+      - "Network/Replication.cs"
+      - "Network/NetSync.cpp"
+    expected_symbols:
+      - "Replicate"
+      - "SyncState"
+      - "NetworkUpdate"
+
+  - id: concept_asset_loading
+    query: "asynchronous asset loading system"
+    category: concept_search
+    expected_files:
+      - "Source/Runtime/Assets/AssetManager.cpp"
+      - "Assets/AssetLoader.cs"
+      - "Core/ResourceLoader.cpp"
+    expected_symbols:
+      - "LoadAsync"
+      - "LoadAsset"
+      - "StreamAsset"
+
+  # ========== Error Search ==========
+  - id: error_null_pointer
+    query: "null pointer exception handling"
+    category: error_search
+    expected_files:
+      - "Source/Runtime/Core/Error/ErrorHandler.cpp"
+      - "Core/Exceptions/NullReferenceException.cs"
+      - "Debug/ErrorManager.cpp"
+    expected_symbols:
+      - "HandleNullPointer"
+      - "CheckNull"
+      - "ValidatePointer"
+
+  - id: error_out_of_memory
+    query: "out of memory error recovery"
+    category: error_search
+    expected_files:
+      - "Source/Runtime/Core/Memory/MemoryAllocator.cpp"
+      - "Core/Memory/MemoryException.cs"
+      - "Memory/ErrorHandling.cpp"
+    expected_symbols:
+      - "HandleOutOfMemory"
+      - "OnAllocationFailed"
+      - "RecoverMemory"
+
+  - id: error_file_not_found
+    query: "file not found error handling"
+    category: error_search
+    expected_files:
+      - "Source/Runtime/IO/FileSystem.cpp"
+      - "IO/FileException.cs"
+      - "Core/FileManager.cpp"
+    expected_symbols:
+      - "HandleFileNotFound"
+      - "OnFileError"
+      - "FileExists"
+
+  - id: error_gpu_device_lost
+    query: "GPU device lost recovery"
+    category: error_search
+    expected_files:
+      - "Source/Runtime/Graphics/RenderDevice.cpp"
+      - "Graphics/DeviceManager.cs"
+      - "Renderer/ErrorRecovery.cpp"
+    expected_symbols:
+      - "RecoverDevice"
+      - "OnDeviceLost"
+      - "HandleDeviceRemoved"
+
+  # ========== Pattern Search ==========
+  - id: pattern_observer
+    query: "observer pattern event system"
+    category: pattern_search
+    expected_files:
+      - "Source/Runtime/Core/Events/EventManager.cpp"
+      - "Events/EventSystem.cs"
+      - "Core/Observer.cpp"
+    expected_symbols:
+      - "Subscribe"
+      - "Notify"
+      - "AddListener"
+
+  - id: pattern_object_pool
+    query: "object pooling pattern"
+    category: pattern_search
+    expected_files:
+      - "Source/Runtime/Core/ObjectPool.cpp"
+      - "Core/Pool/ObjectPool.cs"
+      - "Memory/PoolAllocator.cpp"
+    expected_symbols:
+      - "Allocate"
+      - "Recycle"
+      - "GetPooled"
+
+  - id: pattern_factory
+    query: "factory pattern creation"
+    category: pattern_search
+    expected_files:
+      - "Source/Runtime/Core/Factory.cpp"
+      - "Core/Factory/Factory.cs"
+      - "Patterns/ObjectFactory.cpp"
+    expected_symbols:
+      - "Create"
+      - "CreateInstance"
+      - "Factory"
+
+  - id: pattern_singleton
+    query: "singleton pattern implementation"
+    category: pattern_search
+    expected_files:
+      - "Source/Runtime/Core/Singleton.cpp"
+      - "Core/Patterns/Singleton.cs"
+      - "Patterns/SingletonBase.cpp"
+    expected_symbols:
+      - "GetInstance"
+      - "Instance"
+      - "Singleton"
+
+  # ========== API Search ==========
+  - id: api_json_serialization
+    query: "JSON serialization and deserialization"
+    category: api_search
+    expected_files:
+      - "Source/Runtime/Core/Serialization/JsonSerializer.cpp"
+      - "Serialization/JsonConverter.cs"
+      - "IO/JsonParser.cpp"
+    expected_symbols:
+      - "Serialize"
+      - "Deserialize"
+      - "ToJson"
+
+  - id: api_http_request
+    query: "HTTP request and response handling"
+    category: api_search
+    expected_files:
+      - "Source/Runtime/Network/HttpClient.cpp"
+      - "Network/HTTP/HttpRequest.cs"
+      - "Network/WebClient.cpp"
+    expected_symbols:
+      - "SendRequest"
+      - "GetAsync"
+      - "PostAsync"
+
+  - id: api_thread_pool
+    query: "thread pool task scheduling"
+    category: api_search
+    expected_files:
+      - "Source/Runtime/Core/Threading/ThreadPool.cpp"
+      - "Threading/TaskScheduler.cs"
+      - "Core/Async/ThreadManager.cpp"
+    expected_symbols:
+      - "QueueTask"
+      - "RunAsync"
+      - "ScheduleWork"
+
+  - id: api_vector_math
+    query: "vector3 dot product cross product"
+    category: api_search
+    expected_files:
+      - "Source/Runtime/Math/Vector3.cpp"
+      - "Math/Vector3.cs"
+      - "Core/Math/Vec3.cpp"
+    expected_symbols:
+      - "Dot"
+      - "Cross"
+      - "DotProduct"
+
+  - id: api_input_handling
+    query: "keyboard and mouse input handling"
+    category: api_search
+    expected_files:
+      - "Source/Runtime/Input/InputManager.cpp"
+      - "Input/InputSystem.cs"
+      - "Core/Input/InputHandler.cpp"
+    expected_symbols:
+      - "GetKey"
+      - "GetMouseButton"
+      - "IsKeyPressed"
+
+  # ========== Complex Queries ==========
+  - id: complex_physics_collision
+    query: "continuous collision detection with swept spheres for fast moving objects"
+    category: function_search
+    expected_files:
+      - "Source/Runtime/Physics/CollisionSystem.cpp"
+      - "Physics/CCD/ContinuousCollision.cpp"
+      - "Physics/SweptSphere.cs"
+    expected_symbols:
+      - "SweptSphereTest"
+      - "ContinuousCollisionDetection"
+      - "CheckCCD"
+
+  - id: complex_shader_compilation
+    query: "dynamic shader compilation with preprocessor macros and include files"
+    category: concept_search
+    expected_files:
+      - "Source/Runtime/Renderer/ShaderCompiler.cpp"
+      - "Graphics/Shader/ShaderPreprocessor.cs"
+      - "Renderer/ShaderInclude.cpp"
+    expected_symbols:
+      - "CompileShader"
+      - "PreprocessShader"
+      - "ResolveIncludes"
+
+  - id: complex_multithreaded_rendering
+    query: "multithreaded command buffer recording and submission"
+    category: concept_search
+    expected_files:
+      - "Source/Runtime/Renderer/CommandBuffer.cpp"
+      - "Graphics/Rendering/MultiThreadRenderer.cs"
+      - "Renderer/RenderThread.cpp"
+    expected_symbols:
+      - "RecordCommands"
+      - "SubmitCommandBuffer"
+      - "ExecuteParallel"
+
+  - id: complex_audio_spatializer
+    query: "3D audio spatialization with HRTF and reverb"
+    category: concept_search
+    expected_files:
+      - "Source/Runtime/Audio/AudioEngine.cpp"
+      - "Audio/Spatializer.cs"
+      - "Audio/HRTF/SpatialAudio.cpp"
+    expected_symbols:
+      - "SpatializeAudio"
+      - "ApplyHRTF"
+      - "CalculateReverb"
+
+  - id: complex_ai_pathfinding
+    query: "A* pathfinding with dynamic obstacle avoidance and hierarchical pathfinding"
+    category: function_search
+    expected_files:
+      - "Source/Runtime/AI/Pathfinding.cpp"
+      - "AI/Navigation/AStar.cs"
+      - "AI/PathPlanner.cpp"
+    expected_symbols:
+      - "FindPath"
+      - "AStarSearch"
+      - "HierarchicalPathfind"
+
+  - id: complex_streaming_lod
+    query: "level of detail streaming based on camera distance and viewport"
+    category: concept_search
+    expected_files:
+      - "Source/Runtime/Renderer/LODManager.cpp"
+      - "Streaming/LODStreaming.cs"
+      - "Renderer/StreamingSystem.cpp"
+    expected_symbols:
+      - "UpdateLOD"
+      - "StreamLOD"
+      - "CalculateLODLevel"

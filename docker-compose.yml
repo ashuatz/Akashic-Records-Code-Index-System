@@ -1,0 +1,55 @@
+services:
+  qdrant:
+    image: qdrant/qdrant:latest
+    container_name: akashic-qdrant
+    restart: unless-stopped
+    ports:
+      - "6333:6333"
+      - "6334:6334"
+    volumes:
+      - qdrant_storage:/qdrant/storage
+
+  akashic:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: akashic-mcp
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      AKASHIC_QDRANT_HOST: qdrant
+      AKASHIC_QDRANT_PORT: 6333
+      AKASHIC_SETTINGS_PATH: config/settings.yaml
+      MCP_HOST: 0.0.0.0
+      MCP_PORT: ${AKASHIC_SERVER_PORT:-8088}
+    depends_on:
+      - qdrant
+    ports:
+      - "${AKASHIC_SERVER_PORT:-8088}:${AKASHIC_SERVER_PORT:-8088}"
+    volumes:
+      - ./data:/app/data
+      - ./config:/app/config:ro
+      - ./frontend:/app/frontend:ro
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    command: ["python", "src/mcp_server_http.py", "--host", "0.0.0.0", "--port", "${AKASHIC_SERVER_PORT:-8088}"]
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://localhost:${AKASHIC_SERVER_PORT:-8088}/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 10
+
+  ollama:
+    image: ollama/ollama:latest
+    container_name: akashic-ollama
+    profiles: ["ollama"]
+    restart: unless-stopped
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama_data:/root/.ollama
+
+volumes:
+  qdrant_storage:
+  ollama_data:

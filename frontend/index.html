@@ -1,0 +1,997 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Akashic Records - Code Search</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #1a1a2e;
+            --bg-secondary: #16213e;
+            --bg-card: #0f3460;
+            --accent: #e94560;
+            --accent-hover: #ff6b6b;
+            --accent-secondary: #3498db;
+            --accent-tertiary: #27ae60;
+            --text-primary: #eaeaea;
+            --text-secondary: #a0a0a0;
+            --border: #2a2a4a;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            padding: 30px 0;
+            background: linear-gradient(135deg, var(--bg-secondary), var(--bg-card));
+            border-bottom: 2px solid var(--accent);
+        }
+
+        h1 {
+            font-size: 2.2rem;
+            margin-bottom: 8px;
+            background: linear-gradient(90deg, var(--accent), #ff9a8b);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .subtitle {
+            color: var(--text-secondary);
+            font-size: 1rem;
+        }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            gap: 5px;
+            margin: 20px auto;
+            max-width: 900px;
+            background: var(--bg-secondary);
+            padding: 5px;
+            border-radius: 10px;
+        }
+
+        .tab {
+            flex: 1;
+            padding: 12px 15px;
+            border: none;
+            background: transparent;
+            color: var(--text-secondary);
+            cursor: pointer;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            transition: all 0.3s;
+        }
+
+        .tab:hover {
+            background: var(--bg-card);
+            color: var(--text-primary);
+        }
+
+        .tab.active {
+            background: var(--accent);
+            color: white;
+        }
+
+        /* Tab content */
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .search-container {
+            display: flex;
+            gap: 15px;
+            margin: 20px auto;
+            max-width: 900px;
+            flex-wrap: wrap;
+        }
+
+        .search-input-wrapper {
+            flex: 1;
+            min-width: 300px;
+            position: relative;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 15px 20px;
+            font-size: 1.1rem;
+            border: 2px solid var(--border);
+            border-radius: 10px;
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 20px rgba(233, 69, 96, 0.3);
+        }
+
+        .filters {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        select, button, input[type="number"] {
+            padding: 12px 15px;
+            font-size: 0.95rem;
+            border: 2px solid var(--border);
+            border-radius: 10px;
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        input[type="number"] {
+            width: 80px;
+        }
+
+        button {
+            background: var(--accent);
+            border-color: var(--accent);
+            font-weight: bold;
+        }
+
+        button:hover {
+            background: var(--accent-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(233, 69, 96, 0.4);
+        }
+
+        button.secondary {
+            background: var(--accent-secondary);
+            border-color: var(--accent-secondary);
+        }
+
+        button.secondary:hover {
+            background: #2980b9;
+        }
+
+        .stats-bar {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            padding: 15px;
+            background: var(--bg-secondary);
+            border-radius: 10px;
+            margin: 20px auto;
+            max-width: 900px;
+        }
+
+        .stat {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--accent);
+        }
+
+        .stat-label {
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+        }
+
+        .results-container {
+            margin-top: 20px;
+        }
+
+        .result-card {
+            background: var(--bg-card);
+            border-radius: 12px;
+            margin-bottom: 15px;
+            overflow: hidden;
+            border: 1px solid var(--border);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .result-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .result-header {
+            padding: 12px 15px;
+            background: var(--bg-secondary);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .result-file {
+            font-family: 'Consolas', monospace;
+            color: var(--accent);
+            word-break: break-all;
+            font-size: 0.9rem;
+        }
+
+        .result-file a {
+            color: var(--accent);
+            text-decoration: none;
+        }
+
+        .result-file a:hover {
+            text-decoration: underline;
+        }
+
+        .result-meta {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .badge {
+            padding: 3px 8px;
+            border-radius: 15px;
+            font-size: 0.75rem;
+            font-weight: bold;
+        }
+
+        .badge-language { background: #3498db; }
+        .badge-score { background: #27ae60; }
+        .badge-lines { background: #9b59b6; }
+        .badge-kind { background: #e67e22; }
+
+        .result-symbol {
+            padding: 8px 15px;
+            background: rgba(233, 69, 96, 0.1);
+            border-bottom: 1px solid var(--border);
+            font-family: 'Consolas', monospace;
+            font-size: 0.9rem;
+        }
+
+        .result-code {
+            padding: 12px;
+            overflow-x: auto;
+            max-height: 350px;
+            overflow-y: auto;
+        }
+
+        .result-code pre {
+            margin: 0;
+            font-size: 0.85rem;
+        }
+
+        .result-actions {
+            padding: 10px 15px;
+            background: var(--bg-secondary);
+            border-top: 1px solid var(--border);
+            display: flex;
+            gap: 10px;
+        }
+
+        .result-actions button {
+            padding: 8px 12px;
+            font-size: 0.85rem;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: var(--text-secondary);
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid var(--border);
+            border-top-color: var(--accent);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .no-results {
+            text-align: center;
+            padding: 40px;
+            color: var(--text-secondary);
+        }
+
+        .api-url {
+            text-align: center;
+            margin: 15px 0;
+            padding: 10px;
+            background: var(--bg-secondary);
+            border-radius: 8px;
+            font-family: monospace;
+            font-size: 0.9rem;
+        }
+
+        .api-url input {
+            width: 280px;
+            padding: 8px 12px;
+            border: 1px solid var(--border);
+            border-radius: 5px;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            font-family: monospace;
+        }
+
+        .api-url button {
+            padding: 8px 15px;
+            font-size: 0.85rem;
+        }
+
+        /* Reference results */
+        .ref-item {
+            padding: 10px 15px;
+            border-bottom: 1px solid var(--border);
+            font-family: 'Consolas', monospace;
+            font-size: 0.9rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .ref-item:hover {
+            background: rgba(233, 69, 96, 0.1);
+        }
+
+        .ref-item:last-child {
+            border-bottom: none;
+        }
+
+        .ref-location {
+            color: var(--accent);
+        }
+
+        .ref-kind {
+            color: var(--text-secondary);
+            font-size: 0.8rem;
+        }
+
+        /* Input group for position-based search */
+        .input-group {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .input-group label {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .input-group input {
+            width: 100%;
+        }
+
+        .input-group input.small {
+            width: 70px;
+        }
+
+        footer {
+            text-align: center;
+            padding: 20px;
+            color: var(--text-secondary);
+            border-top: 1px solid var(--border);
+            margin-top: 40px;
+            font-size: 0.9rem;
+        }
+
+        /* Help text */
+        .help-text {
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            margin: 10px 0;
+            padding: 10px;
+            background: var(--bg-secondary);
+            border-radius: 8px;
+            max-width: 900px;
+            margin: 10px auto;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Akashic Records</h1>
+        <p class="subtitle">AI-Powered Code Search for Large Codebases</p>
+    </header>
+
+    <div class="container">
+        <div class="api-url">
+            <label>API: </label>
+            <input type="text" id="apiUrl" value="http://10.14.0.33:8088" placeholder="http://10.14.0.33:8088">
+            <button onclick="testConnection()">Test</button>
+        </div>
+
+        <!-- Tabs -->
+        <div class="tabs">
+            <button class="tab active" onclick="switchTab('search')">Search</button>
+            <button class="tab" onclick="switchTab('symbols')">C++ Symbols</button>
+            <button class="tab" onclick="switchTab('references')">Find References</button>
+            <button class="tab" onclick="switchTab('definition')">Go to Definition</button>
+            <button class="tab" onclick="switchTab('analyze')">Analyze File</button>
+        </div>
+
+        <!-- Search Tab -->
+        <div id="tab-search" class="tab-content active">
+            <div class="search-container">
+                <div class="search-input-wrapper">
+                    <input type="text" id="searchInput" class="search-input" placeholder="Natural language search... (e.g., 'camera frustum culling')">
+                </div>
+                <div class="filters">
+                    <select id="languageFilter">
+                        <option value="">All Languages</option>
+                        <option value="csharp">C#</option>
+                        <option value="cpp">C++</option>
+                        <option value="python">Python</option>
+                    </select>
+                    <select id="limitFilter">
+                        <option value="10">10 results</option>
+                        <option value="20">20 results</option>
+                        <option value="50">50 results</option>
+                    </select>
+                    <button onclick="searchCode()">Search</button>
+                </div>
+            </div>
+            <div class="help-text">
+                Vector search uses semantic embedding to find code by meaning, not just keywords.
+            </div>
+            <div class="stats-bar" id="searchStats" style="display: none;">
+                <div class="stat">
+                    <div class="stat-value" id="searchResultCount">0</div>
+                    <div class="stat-label">Results</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-value" id="searchTime">0ms</div>
+                    <div class="stat-label">Time</div>
+                </div>
+            </div>
+            <div class="results-container" id="searchResults"></div>
+        </div>
+
+        <!-- C++ Symbols Tab -->
+        <div id="tab-symbols" class="tab-content">
+            <div class="search-container">
+                <div class="search-input-wrapper">
+                    <input type="text" id="symbolInput" class="search-input" placeholder="Symbol name... (e.g., 'Camera', 'RenderPipeline')">
+                </div>
+                <div class="filters">
+                    <select id="symbolKind">
+                        <option value="">All Types</option>
+                        <option value="class">Class</option>
+                        <option value="struct">Struct</option>
+                        <option value="function">Function</option>
+                        <option value="method">Method</option>
+                        <option value="enum">Enum</option>
+                        <option value="field">Field</option>
+                        <option value="variable">Variable</option>
+                    </select>
+                    <button onclick="searchSymbols()">Search</button>
+                </div>
+            </div>
+            <div class="help-text">
+                Uses clangd LSP to search C++ symbols by name. Requires compile_commands.json.
+            </div>
+            <div class="stats-bar" id="symbolStats" style="display: none;">
+                <div class="stat">
+                    <div class="stat-value" id="symbolResultCount">0</div>
+                    <div class="stat-label">Symbols</div>
+                </div>
+            </div>
+            <div class="results-container" id="symbolResults"></div>
+        </div>
+
+        <!-- Find References Tab -->
+        <div id="tab-references" class="tab-content">
+            <div class="search-container">
+                <div class="input-group" style="flex: 2;">
+                    <input type="text" id="refFilePath" class="search-input" placeholder="C++ file path... (e.g., C:\TA\unity\Runtime\Camera\Camera.cpp)">
+                </div>
+                <div class="input-group">
+                    <label>Line:</label>
+                    <input type="number" id="refLine" class="small" value="1" min="1">
+                    <label>Col:</label>
+                    <input type="number" id="refColumn" class="small" value="0" min="0">
+                    <button onclick="findReferences()">Find References</button>
+                </div>
+            </div>
+            <div class="help-text">
+                Find all references to the symbol at the specified position using clangd LSP.
+                Position the cursor on a symbol and note the line/column.
+            </div>
+            <div class="stats-bar" id="refStats" style="display: none;">
+                <div class="stat">
+                    <div class="stat-value" id="refResultCount">0</div>
+                    <div class="stat-label">References</div>
+                </div>
+            </div>
+            <div class="results-container" id="refResults"></div>
+        </div>
+
+        <!-- Go to Definition Tab -->
+        <div id="tab-definition" class="tab-content">
+            <div class="search-container">
+                <div class="input-group" style="flex: 2;">
+                    <input type="text" id="defFilePath" class="search-input" placeholder="C++ file path... (e.g., C:\TA\unity\Runtime\Camera\Camera.cpp)">
+                </div>
+                <div class="input-group">
+                    <label>Line:</label>
+                    <input type="number" id="defLine" class="small" value="1" min="1">
+                    <label>Col:</label>
+                    <input type="number" id="defColumn" class="small" value="0" min="0">
+                    <button onclick="goToDefinition()">Go to Definition</button>
+                </div>
+            </div>
+            <div class="help-text">
+                Navigate to the definition of the symbol at the specified position.
+            </div>
+            <div class="results-container" id="defResults"></div>
+        </div>
+
+        <!-- Analyze File Tab -->
+        <div id="tab-analyze" class="tab-content">
+            <div class="search-container">
+                <div class="search-input-wrapper">
+                    <input type="text" id="analyzeFilePath" class="search-input" placeholder="C++ file path to analyze... (e.g., C:\TA\unity\Runtime\Camera\Camera.h)">
+                </div>
+                <button onclick="analyzeFile()">Analyze</button>
+            </div>
+            <div class="help-text">
+                Extract all symbols (classes, functions, methods, etc.) from a C++ file using clangd.
+            </div>
+            <div class="stats-bar" id="analyzeStats" style="display: none;">
+                <div class="stat">
+                    <div class="stat-value" id="analyzeSymbolCount">0</div>
+                    <div class="stat-label">Symbols</div>
+                </div>
+            </div>
+            <div class="results-container" id="analyzeResults"></div>
+        </div>
+    </div>
+
+    <footer>
+        <p>Akashic Records - AI Code Index System</p>
+        <p>Powered by Qdrant + nomic-embed-text + BGE-Reranker + clangd</p>
+    </footer>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-csharp.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-cpp.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+    <script>
+        // Tab switching
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+
+            document.querySelector(`[onclick="switchTab('${tabName}')"]`).classList.add('active');
+            document.getElementById(`tab-${tabName}`).classList.add('active');
+        }
+
+        // Enter key handlers
+        document.getElementById('searchInput').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') searchCode();
+        });
+        document.getElementById('symbolInput').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') searchSymbols();
+        });
+        document.getElementById('analyzeFilePath').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') analyzeFile();
+        });
+
+        function getApiUrl() {
+            return document.getElementById('apiUrl').value.trim();
+        }
+
+        async function testConnection() {
+            const apiUrl = getApiUrl();
+            try {
+                const response = await fetch(`${apiUrl}/health`);
+                const data = await response.json();
+                if (data.status === 'healthy') {
+                    alert('Connection successful!');
+                } else {
+                    alert('Server responded but status is not healthy');
+                }
+            } catch (error) {
+                alert(`Connection failed: ${error.message}`);
+            }
+        }
+
+        async function apiCall(tool, params) {
+            const response = await fetch(`${getApiUrl()}/api/call`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ tool, params })
+            });
+            return await response.json();
+        }
+
+        // Search Code (Vector)
+        async function searchCode() {
+            const query = document.getElementById('searchInput').value.trim();
+            if (!query) return;
+
+            const language = document.getElementById('languageFilter').value;
+            const limit = parseInt(document.getElementById('limitFilter').value);
+            const container = document.getElementById('searchResults');
+            const stats = document.getElementById('searchStats');
+
+            container.innerHTML = '<div class="loading"><div class="spinner"></div><p>Searching...</p></div>';
+            stats.style.display = 'none';
+
+            const startTime = performance.now();
+
+            try {
+                let url = `${getApiUrl()}/api/search?q=${encodeURIComponent(query)}&limit=${limit}`;
+                if (language) url += `&lang=${language}`;
+
+                const response = await fetch(url);
+                const data = await response.json();
+                const searchTime = Math.round(performance.now() - startTime);
+
+                if (data.error) {
+                    container.innerHTML = `<div class="no-results">Error: ${escapeHtml(data.error)}</div>`;
+                    return;
+                }
+
+                // Check for nested error
+                if (data.result?.error) {
+                    container.innerHTML = `<div class="no-results">Error: ${escapeHtml(data.result.error)}</div>`;
+                    return;
+                }
+
+                document.getElementById('searchResultCount').textContent = data.results?.length || 0;
+                document.getElementById('searchTime').textContent = `${searchTime}ms`;
+                stats.style.display = 'flex';
+
+                displaySearchResults(data.results || [], container);
+            } catch (error) {
+                container.innerHTML = `<div class="no-results">Error: ${escapeHtml(error.message)}</div>`;
+            }
+        }
+
+        // Search C++ Symbols
+        async function searchSymbols() {
+            const name = document.getElementById('symbolInput').value.trim();
+            if (!name) return;
+
+            const kind = document.getElementById('symbolKind').value;
+            const container = document.getElementById('symbolResults');
+            const stats = document.getElementById('symbolStats');
+
+            container.innerHTML = '<div class="loading"><div class="spinner"></div><p>Searching symbols...</p></div>';
+            stats.style.display = 'none';
+
+            try {
+                const params = { name };
+                if (kind) params.kind = kind;
+
+                const result = await apiCall('get_cpp_symbols', params);
+
+                if (result.error) {
+                    container.innerHTML = `<div class="no-results">Error: ${escapeHtml(result.error)}</div>`;
+                    return;
+                }
+
+                // Check for nested error in result
+                if (result.result?.error) {
+                    container.innerHTML = `<div class="no-results">Error: ${escapeHtml(result.result.error)}</div>`;
+                    return;
+                }
+
+                const symbols = result.result?.symbols || [];
+                document.getElementById('symbolResultCount').textContent = symbols.length;
+                stats.style.display = 'flex';
+
+                displaySymbolResults(symbols, container);
+            } catch (error) {
+                container.innerHTML = `<div class="no-results">Error: ${escapeHtml(error.message)}</div>`;
+            }
+        }
+
+        // Find References
+        async function findReferences() {
+            const filePath = document.getElementById('refFilePath').value.trim();
+            const line = parseInt(document.getElementById('refLine').value);
+            const column = parseInt(document.getElementById('refColumn').value);
+
+            if (!filePath) {
+                alert('File path is required');
+                return;
+            }
+
+            const container = document.getElementById('refResults');
+            const stats = document.getElementById('refStats');
+
+            container.innerHTML = '<div class="loading"><div class="spinner"></div><p>Finding references...</p></div>';
+            stats.style.display = 'none';
+
+            try {
+                const result = await apiCall('find_cpp_references', { file_path: filePath, line, column });
+
+                if (result.error) {
+                    container.innerHTML = `<div class="no-results">Error: ${escapeHtml(result.error)}</div>`;
+                    return;
+                }
+
+                // Check for nested error in result
+                if (result.result?.error) {
+                    container.innerHTML = `<div class="no-results">Error: ${escapeHtml(result.result.error)}</div>`;
+                    return;
+                }
+
+                const refs = result.result?.references || [];
+                document.getElementById('refResultCount').textContent = refs.length;
+                stats.style.display = 'flex';
+
+                displayReferenceResults(refs, container);
+            } catch (error) {
+                container.innerHTML = `<div class="no-results">Error: ${escapeHtml(error.message)}</div>`;
+            }
+        }
+
+        // Go to Definition
+        async function goToDefinition() {
+            const filePath = document.getElementById('defFilePath').value.trim();
+            const line = parseInt(document.getElementById('defLine').value);
+            const column = parseInt(document.getElementById('defColumn').value);
+
+            if (!filePath) {
+                alert('File path is required');
+                return;
+            }
+
+            const container = document.getElementById('defResults');
+            container.innerHTML = '<div class="loading"><div class="spinner"></div><p>Finding definition...</p></div>';
+
+            try {
+                const result = await apiCall('go_to_definition', { file_path: filePath, line, column });
+
+                if (result.error) {
+                    container.innerHTML = `<div class="no-results">Error: ${escapeHtml(result.error)}</div>`;
+                    return;
+                }
+
+                // Check for nested error in result
+                if (result.result?.error) {
+                    container.innerHTML = `<div class="no-results">Error: ${escapeHtml(result.result.error)}</div>`;
+                    return;
+                }
+
+                if (result.result?.found && result.result?.definition) {
+                    const def = result.result.definition;
+                    const jsPath = escapeJsString(def.file_path);
+                    container.innerHTML = `
+                        <div class="result-card">
+                            <div class="result-header">
+                                <span class="result-file">${escapeHtml(def.file_path)}:${def.line}</span>
+                                <span class="badge badge-kind">${def.kind || 'definition'}</span>
+                            </div>
+                            <div class="result-symbol">Definition at line ${def.line}, column ${def.column}</div>
+                            ${def.context ? `
+                                <div class="result-code">
+                                    <pre><code class="language-cpp">${escapeHtml(def.context)}</code></pre>
+                                </div>
+                            ` : ''}
+                            <div class="result-actions">
+                                <button class="secondary" onclick="fillRef('${jsPath}', ${def.line}, ${def.column})">Find References</button>
+                            </div>
+                        </div>
+                    `;
+                    Prism.highlightAll();
+                } else {
+                    container.innerHTML = '<div class="no-results">Definition not found</div>';
+                }
+            } catch (error) {
+                container.innerHTML = `<div class="no-results">Error: ${escapeHtml(error.message)}</div>`;
+            }
+        }
+
+        // Analyze File
+        async function analyzeFile() {
+            const filePath = document.getElementById('analyzeFilePath').value.trim();
+            if (!filePath) {
+                alert('File path is required');
+                return;
+            }
+
+            const container = document.getElementById('analyzeResults');
+            const stats = document.getElementById('analyzeStats');
+
+            container.innerHTML = '<div class="loading"><div class="spinner"></div><p>Analyzing file...</p></div>';
+            stats.style.display = 'none';
+
+            try {
+                const result = await apiCall('analyze_cpp_file', { file_path: filePath });
+
+                if (result.error) {
+                    container.innerHTML = `<div class="no-results">Error: ${escapeHtml(result.error)}</div>`;
+                    return;
+                }
+
+                // Check for nested error in result
+                if (result.result?.error) {
+                    container.innerHTML = `<div class="no-results">Error: ${escapeHtml(result.result.error)}</div>`;
+                    return;
+                }
+
+                const symbols = result.result?.symbols || [];
+                document.getElementById('analyzeSymbolCount').textContent = symbols.length;
+                stats.style.display = 'flex';
+
+                displaySymbolResults(symbols, container);
+            } catch (error) {
+                container.innerHTML = `<div class="no-results">Error: ${escapeHtml(error.message)}</div>`;
+            }
+        }
+
+        // Display functions
+        function displaySearchResults(results, container) {
+            if (!results || results.length === 0) {
+                container.innerHTML = '<div class="no-results">No results found</div>';
+                return;
+            }
+
+            container.innerHTML = results.map(result => {
+                const score = result.rerank_score !== null ? result.rerank_score : result.score;
+                const scorePercent = Math.round(score * 100);
+                const languageClass = getLanguageClass(result.language);
+
+                return `
+                    <div class="result-card">
+                        <div class="result-header">
+                            <span class="result-file">${escapeHtml(result.file_path)}</span>
+                            <div class="result-meta">
+                                <span class="badge badge-language">${result.language || 'unknown'}</span>
+                                <span class="badge badge-score">${scorePercent}%</span>
+                                <span class="badge badge-lines">L${result.start_line}-${result.end_line}</span>
+                            </div>
+                        </div>
+                        ${result.symbol_name ? `<div class="result-symbol">${escapeHtml(result.symbol_name)}</div>` : ''}
+                        <div class="result-code">
+                            <pre><code class="language-${languageClass}">${escapeHtml(result.code)}</code></pre>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            Prism.highlightAll();
+        }
+
+        function displaySymbolResults(symbols, container) {
+            if (!symbols || symbols.length === 0) {
+                container.innerHTML = '<div class="no-results">No symbols found</div>';
+                return;
+            }
+
+            container.innerHTML = symbols.map(s => {
+                // Support both line_start (Symbol) and line (Reference) field names
+                const lineNum = s.line_start || s.line || 0;
+                const colNum = s.column_start || s.column || 0;
+                // Use escapeJsString for onclick handlers (handles Windows backslashes)
+                const jsPath = escapeJsString(s.file_path);
+                return `
+                <div class="result-card">
+                    <div class="result-header">
+                        <span class="result-file">
+                            <a href="#" onclick="fillAnalyze('${jsPath}')">${escapeHtml(s.file_path)}</a>:${lineNum}
+                        </span>
+                        <div class="result-meta">
+                            <span class="badge badge-kind">${s.kind || 'unknown'}</span>
+                            ${s.parent_name ? `<span class="badge badge-language">${escapeHtml(s.parent_name)}</span>` : ''}
+                        </div>
+                    </div>
+                    <div class="result-symbol">
+                        <strong>${escapeHtml(s.name)}</strong>
+                        ${s.signature ? `<span style="color: var(--text-secondary);"> ${escapeHtml(s.signature)}</span>` : ''}
+                    </div>
+                    <div class="result-actions">
+                        <button class="secondary" onclick="fillRef('${jsPath}', ${lineNum}, ${colNum})">Find References</button>
+                        <button class="secondary" onclick="fillDef('${jsPath}', ${lineNum}, ${colNum})">Go to Definition</button>
+                    </div>
+                </div>
+            `}).join('');
+        }
+
+        function displayReferenceResults(refs, container) {
+            if (!refs || refs.length === 0) {
+                container.innerHTML = '<div class="no-results">No references found</div>';
+                return;
+            }
+
+            container.innerHTML = refs.map(r => {
+                const lineNum = r.line || r.line_start || 0;
+                const colNum = r.column || r.column_start || 0;
+                // Use escapeJsString for onclick handlers (handles Windows backslashes)
+                const jsPath = escapeJsString(r.file_path);
+                return `
+                <div class="result-card">
+                    <div class="result-header">
+                        <span class="result-file">
+                            <a href="#" onclick="fillDef('${jsPath}', ${lineNum}, ${colNum})">${escapeHtml(r.file_path)}:${lineNum}</a>
+                        </span>
+                        <span class="badge badge-kind">${r.kind || 'reference'}</span>
+                    </div>
+                    ${r.context ? `
+                        <div class="result-code">
+                            <pre><code class="language-cpp">${escapeHtml(r.context)}</code></pre>
+                        </div>
+                    ` : ''}
+                    <div class="result-actions">
+                        <button class="secondary" onclick="fillDef('${jsPath}', ${lineNum}, ${colNum})">Go to Definition</button>
+                    </div>
+                </div>
+            `}).join('');
+
+            Prism.highlightAll();
+        }
+
+        // Helper functions
+        function fillRef(path, line, col) {
+            document.getElementById('refFilePath').value = path;
+            document.getElementById('refLine').value = line;
+            document.getElementById('refColumn').value = col;
+            switchTab('references');
+        }
+
+        function fillDef(path, line, col) {
+            document.getElementById('defFilePath').value = path;
+            document.getElementById('defLine').value = line;
+            document.getElementById('defColumn').value = col;
+            switchTab('definition');
+        }
+
+        function fillAnalyze(path) {
+            document.getElementById('analyzeFilePath').value = path;
+            switchTab('analyze');
+        }
+
+        function getLanguageClass(language) {
+            const map = { 'csharp': 'csharp', 'cpp': 'cpp', 'python': 'python' };
+            return map[language] || 'plaintext';
+        }
+
+        function escapeHtml(text) {
+            if (!text) return '';
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // Escape for JavaScript string literals (handles backslashes in Windows paths)
+        function escapeJsString(text) {
+            if (!text) return '';
+            return text.replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/"/g, '\\"');
+        }
+    </script>
+</body>
+</html>

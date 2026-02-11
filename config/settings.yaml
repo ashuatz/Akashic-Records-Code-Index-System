@@ -1,0 +1,85 @@
+# Akashic Records Configuration
+# AI Code Index System - MCP Server
+
+# Server settings
+server:
+  host: "0.0.0.0"
+  port: 8765
+  mode: "stdio"  # "stdio" or "http"
+
+# Embedding settings (Ollama server)
+embedding:
+  url: "http://localhost:11434"
+  endpoint: "/api/embed"
+  model: "nomic-embed-text"
+  dimensions: 768
+  timeout: 60
+
+# Qdrant settings
+qdrant:
+  host: "localhost"
+  port: 6333
+  collection: "code_index"
+
+# Reranker settings
+reranker:
+  model: "BAAI/bge-reranker-base"
+  enabled: true
+  top_k_candidates: 100
+  top_k_results: 10
+
+# SQLite metadata DB
+metadata:
+  db_path: "./data/metadata.db"
+
+# Indexing settings
+indexing:
+  # File extensions to include
+  include_extensions:
+    - ".cs"
+    - ".cpp"
+    - ".h"
+    - ".hpp"
+    - ".c"
+    - ".py"
+    - ".js"
+    - ".ts"
+    - ".tsx"
+    - ".jsx"
+
+  # Patterns to exclude
+  exclude_patterns:
+    - "ThirdParty/*"
+    - "Plugins/*"
+    - "Build/*"
+    - "Intermediate/*"
+    - "node_modules/*"
+    - "__pycache__/*"
+    - ".git/*"
+    - "*.generated.cs"
+    - "*.g.cs"
+    - "*.min.js"
+
+  # Chunking settings
+  chunk:
+    max_tokens: 500  # Ollama nomic-embed-text context ~8192 tokens. 500 tokens * 3.3 = ~1650 chars is safe
+    overlap_tokens: 50
+    min_chunk_size: 30
+
+  # Batch settings (tuned for 48GB RAM, ~90% usage target)
+  batch_size: 10          # Smaller batches = less memory per batch
+  parallel_workers: 1     # Single worker = sequential processing, minimal memory
+  gc_interval: 50         # Force garbage collection every N files
+  max_memory_mb: 43000    # ~42GB limit (90% of 48GB)
+
+# Search settings
+search:
+  default_limit: 10
+  max_limit: 100
+  use_reranker: true
+  hybrid_search: true  # Vector + BM25
+
+# Logging
+logging:
+  level: "INFO"
+  file: "./data/akashic.log"

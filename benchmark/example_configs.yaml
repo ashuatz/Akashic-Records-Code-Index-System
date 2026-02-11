@@ -1,0 +1,190 @@
+# Example Benchmark Configurations
+# Use these to compare different setups
+
+# Quick Test (2 configs, fast)
+quick_test:
+  - name: "baseline_1024"
+    chunk_size: 1024
+    embedding_model: "nomic-embed-text-v1.5"
+    use_reranker: false
+
+  - name: "with_reranker_1024"
+    chunk_size: 1024
+    embedding_model: "nomic-embed-text-v1.5"
+    use_reranker: true
+    reranker_model: "BAAI/bge-reranker-base"
+
+# Standard Comparison (chunk sizes)
+chunk_comparison:
+  - name: "chunk_512"
+    chunk_size: 512
+    embedding_model: "nomic-embed-text-v1.5"
+    use_reranker: true
+    reranker_model: "BAAI/bge-reranker-base"
+
+  - name: "chunk_1024"
+    chunk_size: 1024
+    embedding_model: "nomic-embed-text-v1.5"
+    use_reranker: true
+    reranker_model: "BAAI/bge-reranker-base"
+
+  - name: "chunk_2048"
+    chunk_size: 2048
+    embedding_model: "nomic-embed-text-v1.5"
+    use_reranker: true
+    reranker_model: "BAAI/bge-reranker-base"
+
+  - name: "chunk_4096"
+    chunk_size: 4096
+    embedding_model: "nomic-embed-text-v1.5"
+    use_reranker: true
+    reranker_model: "BAAI/bge-reranker-base"
+
+# Embedding Model Comparison (fixed chunk size)
+embedding_comparison:
+  - name: "nomic_embed_code"
+    chunk_size: 2048
+    embedding_model: "nomic-embed-code"
+    use_reranker: true
+    reranker_model: "BAAI/bge-reranker-base"
+
+  - name: "nomic_embed_text"
+    chunk_size: 2048
+    embedding_model: "nomic-embed-text-v1.5"
+    use_reranker: true
+    reranker_model: "BAAI/bge-reranker-base"
+
+  - name: "bge_small"
+    chunk_size: 2048
+    embedding_model: "BAAI/bge-small-en-v1.5"
+    use_reranker: true
+    reranker_model: "BAAI/bge-reranker-base"
+
+  - name: "bge_base"
+    chunk_size: 2048
+    embedding_model: "BAAI/bge-base-en-v1.5"
+    use_reranker: true
+    reranker_model: "BAAI/bge-reranker-base"
+
+# Reranker Ablation Study
+reranker_study:
+  - name: "no_rerank_512"
+    chunk_size: 512
+    embedding_model: "nomic-embed-text-v1.5"
+    use_reranker: false
+
+  - name: "with_rerank_512"
+    chunk_size: 512
+    embedding_model: "nomic-embed-text-v1.5"
+    use_reranker: true
+    reranker_model: "BAAI/bge-reranker-base"
+
+  - name: "no_rerank_2048"
+    chunk_size: 2048
+    embedding_model: "nomic-embed-text-v1.5"
+    use_reranker: false
+
+  - name: "with_rerank_2048"
+    chunk_size: 2048
+    embedding_model: "nomic-embed-text-v1.5"
+    use_reranker: true
+    reranker_model: "BAAI/bge-reranker-base"
+
+# Comprehensive Test (12 configs)
+comprehensive:
+  # Small chunks
+  - name: "small_no_rerank"
+    chunk_size: 512
+    embedding_model: "nomic-embed-text-v1.5"
+    use_reranker: false
+
+  - name: "small_with_rerank"
+    chunk_size: 512
+    embedding_model: "nomic-embed-text-v1.5"
+    use_reranker: true
+    reranker_model: "BAAI/bge-reranker-base"
+
+  # Medium chunks
+  - name: "medium_1024_no_rerank"
+    chunk_size: 1024
+    embedding_model: "nomic-embed-text-v1.5"
+    use_reranker: false
+
+  - name: "medium_1024_with_rerank"
+    chunk_size: 1024
+    embedding_model: "nomic-embed-text-v1.5"
+    use_reranker: true
+    reranker_model: "BAAI/bge-reranker-base"
+
+  - name: "medium_2048_no_rerank"
+    chunk_size: 2048
+    embedding_model: "nomic-embed-text-v1.5"
+    use_reranker: false
+
+  - name: "medium_2048_with_rerank"
+    chunk_size: 2048
+    embedding_model: "nomic-embed-text-v1.5"
+    use_reranker: true
+    reranker_model: "BAAI/bge-reranker-base"
+
+  # Large chunks
+  - name: "large_4096_no_rerank"
+    chunk_size: 4096
+    embedding_model: "nomic-embed-text-v1.5"
+    use_reranker: false
+
+  - name: "large_4096_with_rerank"
+    chunk_size: 4096
+    embedding_model: "nomic-embed-text-v1.5"
+    use_reranker: true
+    reranker_model: "BAAI/bge-reranker-base"
+
+  # Extra large chunks
+  - name: "xlarge_8000_no_rerank"
+    chunk_size: 8000
+    embedding_model: "nomic-embed-text-v1.5"
+    use_reranker: false
+
+  - name: "xlarge_8000_with_rerank"
+    chunk_size: 8000
+    embedding_model: "nomic-embed-text-v1.5"
+    use_reranker: true
+    reranker_model: "BAAI/bge-reranker-base"
+
+  # Alternative embeddings
+  - name: "bge_base_2048"
+    chunk_size: 2048
+    embedding_model: "BAAI/bge-base-en-v1.5"
+    use_reranker: true
+    reranker_model: "BAAI/bge-reranker-base"
+
+  - name: "code_specific_2048"
+    chunk_size: 2048
+    embedding_model: "nomic-embed-code"
+    use_reranker: true
+    reranker_model: "BAAI/bge-reranker-base"
+
+# Speed vs Quality Trade-off
+speed_quality:
+  - name: "fastest"
+    chunk_size: 512
+    embedding_model: "nomic-embed-text-v1.5"
+    use_reranker: false
+
+  - name: "balanced"
+    chunk_size: 1024
+    embedding_model: "nomic-embed-text-v1.5"
+    use_reranker: true
+    reranker_model: "BAAI/bge-reranker-base"
+
+  - name: "quality"
+    chunk_size: 2048
+    embedding_model: "nomic-embed-text-v1.5"
+    use_reranker: true
+    reranker_model: "BAAI/bge-reranker-base"
+
+  - name: "max_quality"
+    chunk_size: 4096
+    embedding_model: "nomic-embed-text-v1.5"
+    use_reranker: true
+    reranker_model: "BAAI/bge-reranker-base"
